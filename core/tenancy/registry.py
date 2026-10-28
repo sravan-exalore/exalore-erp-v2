@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from django.conf import settings
 
 
@@ -7,14 +9,18 @@ def register_tenant_database(tenant):
     if alias in settings.DATABASES:
         return alias
 
-    settings.DATABASES[alias] = {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": tenant.db_name,
-        "USER": tenant.db_user,
-        "PASSWORD": tenant.get_password(),
-        "HOST": tenant.db_host,
-        "PORT": tenant.db_port,
-        "CONN_MAX_AGE": 60,
-    }
+    config = deepcopy(settings.DATABASES["default"])
+
+    config.update(
+        {
+            "NAME": tenant.db_name,
+            "USER": tenant.db_user,
+            "PASSWORD": tenant.db_password,
+            "HOST": tenant.db_host,
+            "PORT": tenant.db_port,
+        }
+    )
+
+    settings.DATABASES[alias] = config
 
     return alias

@@ -1,28 +1,15 @@
+from django.conf import settings
+
 from core.database.context import get_current_database
-
-DEFAULT_APPS = {
-    "authentication",
-    "tenancy",
-}
-
-
-TENANT_APPS = {
-    "inventory",
-    "sales",
-    "purchase",
-    "accounts",
-    "hr",
-    "general",
-}
 
 
 class TenantRouter:
     def db_for_read(self, model, **hints):
         app = model._meta.app_label
-        if app in DEFAULT_APPS:
+        if app in settings.DEFAULT_APPS:
             return "default"
 
-        if app in TENANT_APPS:
+        if app in settings.TENANT_APPS:
             db = get_current_database()
             if not db:
                 raise RuntimeError("Tenant database context missing")
@@ -39,11 +26,11 @@ class TenantRouter:
 
         return False
 
-    def allow_migrate(self, db, app_label, **hints):
-        if app_label in DEFAULT_APPS:
+    def allow_migrate(self, db, app_label, model_name=None, **hints):
+        if app_label in settings.DEFAULT_APPS:
             return db == "default"
 
-        if app_label in TENANT_APPS:
+        if app_label in settings.TENANT_APPS:
             return db != "default"
 
         return db == "default"

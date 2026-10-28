@@ -29,6 +29,23 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+DEFAULT_APPS = {
+    "authentication",
+    "tenancy",
+}
+
+
+TENANT_APPS = {
+    # "inventory",
+    # "sales",
+    # "purchase",
+    # "accounts",
+    # "hr",
+    # "general",
+    "testapp",
+}
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,8 +56,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # core apps
+    "core",
     "core.authentication",
     "core.tenancy",
+    # local apps
+    "apps.testapp",
+    # third party apps
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -86,7 +108,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("POSTGRES_DB", "exalore_default_test"),
+        "NAME": os.getenv("POSTGRES_DB", "exalore_default"),
         "USER": os.getenv("POSTGRES_USER", "postgres"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD", "root"),
         "HOST": os.getenv("POSTGRES_HOST", "localhost"),
