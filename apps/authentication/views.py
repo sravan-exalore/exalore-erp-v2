@@ -4,6 +4,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from apps.general.models import GnUser
 from rest_framework.response import Response
 from core.context import tenant_context
+from core.tenancy.registry import register_tenant_database
 
 
 class LoginView(APIView):
@@ -17,12 +18,9 @@ class LoginView(APIView):
         if not user:
             return Response({"error": "Invalid credentials"}, status=401)
 
-        # Get tenant database
-        database = user.tenant.db_name
+        database = register_tenant_database(user.tenant)
 
-        # Switch tenant DB
         with tenant_context(database):
-
             gn_user = GnUser.objects.get(default_user_id=user.id)
 
         refresh = RefreshToken.for_user(user)

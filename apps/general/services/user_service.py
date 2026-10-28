@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from apps.general.models import GnUser
-from core.database.context import tenant_context
+from core.context import tenant_context
 
 User = get_user_model()
 
