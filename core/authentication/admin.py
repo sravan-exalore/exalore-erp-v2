@@ -6,8 +6,34 @@ from .models import CustomUser
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-
     model = CustomUser
+
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "username",
+                    "password",
+                )
+            },
+        ),
+        ("Personal info", {"fields": ("first_name", "last_name", "email")}),
+        (
+            "Permissions",
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    # "groups",
+                    # "user_permissions",
+                ),
+            },
+        ),
+        ("Important dates", {"fields": ("last_login", "date_joined")}),
+        ("EXALORE permissions", {"fields": ("is_core_admin",)}),
+    )
 
     list_display = [
         "username",
@@ -17,6 +43,4 @@ class CustomUserAdmin(UserAdmin):
         "is_core_admin",
     ]
 
-    fieldsets = UserAdmin.fieldsets + (
-        ("EXALORE permissions", {"fields": ("is_core_admin",)}),
-    )
+    ordering = ["-date_joined"]
