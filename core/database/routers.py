@@ -1,17 +1,14 @@
-from platform.database.context import get_current_database
+from core.database.context import get_current_database
 
 DEFAULT_APPS = {
-    "auth",
-    "contenttypes",
-    "sessions",
-    "admin",
+    "authentication",
     "tenancy",
 }
 
 
 TENANT_APPS = {
-    "sales",
     "inventory",
+    "sales",
     "purchase",
     "accounts",
     "hr",
