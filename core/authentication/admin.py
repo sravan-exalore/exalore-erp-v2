@@ -32,7 +32,7 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
         ("Important dates", {"fields": ("last_login", "date_joined")}),
-        ("EXALORE permissions", {"fields": ("is_core_admin",)}),
+        ("Tenant", {"fields": ("tenant",)}),
     )
 
     list_display = [
@@ -40,7 +40,6 @@ class CustomUserAdmin(UserAdmin):
         "email",
         "is_staff",
         "is_active",
-        "is_core_admin",
     ]
 
     ordering = ["-date_joined"]
