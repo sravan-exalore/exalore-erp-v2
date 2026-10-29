@@ -120,6 +120,46 @@ DATABASES = {
     }
 }
 
+
+def _load_tenant_databases():
+    """
+    Load active tenants from portal_tenant table and inject into DATABASES.
+    Uses raw psycopg2 (not Django ORM) since this runs before Django is ready.
+    Silently skips if table doesn't exist yet (first migration).
+    """
+    import psycopg2
+    try:
+        conn = psycopg2.connect(
+            dbname=DATABASES['default']['NAME'],
+            user=DATABASES['default']['USER'],
+            password=DATABASES['default']['PASSWORD'],
+            host=DATABASES['default']['HOST'],
+            port=DATABASES['default']['PORT'],
+        )
+        conn.autocommit = True
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT db_alias, db_name, db_host, db_port, db_user, db_password
+                FROM tenancy_tenant
+            """)
+            for db_alias, db_name, db_host, db_port, db_user, db_pwd_enc in cur.fetchall():
+                if db_alias not in DATABASES:
+                    DATABASES[db_alias] = {
+                        "ENGINE": "django.db.backends.postgresql",
+                        "NAME": db_name,
+                        "USER": db_user,
+                        "PASSWORD": db_pwd_enc,
+                        "HOST": db_host,
+                        "PORT": db_port,
+                    }
+        conn.close()
+    except Exception:
+        pass
+
+
+_load_tenant_databases()
+
+
 DATABASE_ROUTERS = ["core.database.routers.TenantRouter"]
 
 AUTH_USER_MODEL = "authentication.CustomUser"
