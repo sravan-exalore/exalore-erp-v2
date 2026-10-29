@@ -1,13 +1,17 @@
-from contextlib import contextmanager
-from core.database.context import set_current_database, reset_current_database
+"""
+Backward-compatible proxy for tenant context management.
+Canonical implementation lives in core.database.context.
+"""
+from core.database.context import (
+    get_current_database,
+    set_current_database,
+    reset_current_database,
+    tenant_context,
+)
 
-
-@contextmanager
-def tenant_context(database):
-    token = set_current_database(database)
-
-    try:
-        yield
-
-    finally:
-        reset_current_database(token)
+__all__ = [
+    "get_current_database",
+    "set_current_database",
+    "reset_current_database",
+    "tenant_context",
+]
